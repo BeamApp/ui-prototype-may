@@ -122,7 +122,7 @@
       });
     }
 
-    ViewModel.property("groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard")]);
+    ViewModel.property("groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard"), new SubjectGroup("Guru")]);
 
     ViewModel.property("portals", ["MacBook", "MacBook Pro", "Windows PC", "iPhone", "iPod", "iMac", "Car", "TV", "Windows Phone", "Nexus 7"]);
 
@@ -246,7 +246,7 @@
 
     window.vm = vm = new ViewModel;
     ko.applyBindings(vm);
-    return $(document).on("resize", function() {
+    return $(window).on("resize", function() {
       return vm.viewportWidth(document.width);
     });
   });
