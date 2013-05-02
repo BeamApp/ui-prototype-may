@@ -9,6 +9,10 @@ log = (msg) ->
 
 $ ->
   $c = $("#container")
+  $c.on "scrollstart", ->
+    e.preventDefault()
+    false
+  
   $d = $(document)
   
   dragIndicator = null
@@ -72,7 +76,7 @@ $ ->
     $c.addClass "dragging"
     dragIndicator = $("<span></span>")
       .addClass("drag")
-      .appendTo("body")
+      .appendTo("#container")
     
     $t = $(dragIntent.target).closest(".draggable")
     o = $t.offset()

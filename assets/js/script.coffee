@@ -124,7 +124,7 @@ class ViewModel extends ko.ViewModel
     self = $("<div>")
       .text("Beamed!")
       .addClass("message")
-      .prependTo("body")
+      .appendTo("#container")
       .css(opacity: 0)
       .fadeTo(100, 1)
       .delay(500)
