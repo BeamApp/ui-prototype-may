@@ -75,7 +75,7 @@ $ ->
     
     $t = $(dragIntent.target)
     o = $t.offset()
-    dragIndicator.text $t.text()
+    dragIndicator.text($t.attr('title') ? $t.text())
     
     w = dragIndicator.outerWidth()
     h = 24
@@ -154,23 +154,19 @@ $ ->
     if not dragIntent or dragIntent.isTap()
       click = $.Event('click')
       $t.trigger click
+      return if $t.is "textarea"
       
       if $t.is "input[type=submit]:enabled" and not click.isDefaultPrevented()
         $t.closest("form").trigger("submit")
-      else if $t.is "textarea"
-        return
-        
-      e.preventDefault()
         
     else if dragIntent?.isSwipe()
       dx = dragIntent.diff().dx
-      e.preventDefault()
-      
       if dx < 0
         window.vm.onNext()
       else if dx > 0
         window.vm.onPrevious()
     
+    e.preventDefault()
     return
   
   $d.on "mousedown", ".subjects li", (e) ->

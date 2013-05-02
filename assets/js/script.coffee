@@ -17,10 +17,11 @@ ko.bindingHandlers.tap =
       
 ko.bindingHandlers.click =
   update: (element, valueAccessor) ->
-    callback = ko.unwrapObservable valueAccessor()    
+    callback = ko.unwrapObservable valueAccessor()
     $(element).on "click", (e) ->
       e?.preventDefault?() if $(this).is("a")
       e?.stopPropagation()
+      return if window.vm.swiping() or window.vm.dragging()
       callback()
 
 Counter = ->
@@ -50,7 +51,7 @@ class ViewModel extends ko.ViewModel
   @property "draggedSubject", null
   
   @accessor "hasNext", ->
-    not @dragging() and @page() is 0 and not @detailedSubject()
+    not @dragging() and not @swiping() and @page() is 0 and not @detailedSubject()
   
   @accessor "hasPrevious", ->
     @page() > 0
@@ -106,6 +107,3 @@ class ViewModel extends ko.ViewModel
 $ ->
   window.vm = new ViewModel
   ko.applyBindings vm
-  
-  ko.subscribeAndDo vm.page, (i) ->
-    $("body")[if i is 0 then "addClass" else "removeClass"]("firstPage")

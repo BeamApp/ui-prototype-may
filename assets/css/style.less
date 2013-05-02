@@ -129,12 +129,20 @@ ul.subjects, ul.portals {
         rgba(98,186,236,1) 0%,
         rgba(18,128,211,1) 100%);
     }
+    
+    .editing &.active {
+      border-color: #aaa; 
+    }
+    
+    .editing &:not(.active) {
+      opacity: 0.2;
+    }
   }
 }
 
 ul.subjects {
   li {
-    -webkit-transition: background-image 1s linear, color 0.2s;
+    -webkit-transition: background-image 1s linear, color 0.2s, opacity 0.2s, border-color 0.6s;
   }
 }
 
