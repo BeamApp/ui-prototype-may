@@ -6,10 +6,22 @@ html, body {
   margin: 0;
 }
 
+html, body, span, p, b, i, u, strong, em, del, ul, li, div {
+  -webkit-user-drag: none;
+  -webkit-user-modify: none;
+  -webkit-highlight: none;
+
+  -webkit-touch-callout:  none;
+  -webkit-user-select:    none;
+  -khtml-user-select:     none;
+  -moz-user-select:       none;
+  -ms-user-select:        none;
+  -o-user-select:         none;
+  user-select:            none;
+}
+
 body {
   font: 15px/2 Helvetica, Arial, sans-serif;
-  -webkit-user-select: none;
-  user-select: none;
   cursor: default;
 }
 
@@ -19,10 +31,11 @@ body {
   background: #fff;
   overflow: hidden;
   white-space: nowrap;
+  position: relative;
   
   .pages {
-    position: relative;
-    width: 9999px;
+    position: absolute;
+    width: 2 * @viewportWidth;
     
     &.animated {
       -webkit-transition: left 0.2s;
@@ -30,19 +43,30 @@ body {
   }
   
   .page {
-    outline: 1px solid #eee;
-    float: left;
     width: @viewportWidth;
     height: @viewportHeight;
     overflow: scroll;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 0;
+    padding-top: 36px + 5px;
+    
+    &#portal-page {
+      left: @viewportWidth - 40px; 
+      padding-left: 40px;
+    }
     
     h1 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: @viewportWidth;
+      z-index: 50;
       color: #fff;
       text-align: center;
       font-size: 18px;
-      margin: 0 0 5px 0;
+      margin: 0;
       padding: 0;
       
       background-image: -webkit-linear-gradient(top,
@@ -59,31 +83,13 @@ body {
       color: #aaa;
     }
   }
-  
-  &.dragging, &.editPortals, &.manualBeam {
-    .pages {
-      left: -1 * @viewportWidth;
-    }
-  }
-  
-  .whenDragging, .whenEditingPortals, .whenManual {
-    display: none; 
-  }
-  
-  &.dragging .whenDragging, &.editPortals .whenEditingPortals, &.manualBeam .whenManual {
-    display: block; 
-  }
-}
-
-#portal-page {
-  background-color: #f8f8f8;
 }
 
 .right-edge, .left-edge {
   position: absolute;
   height: @viewportHeight;
-  width: @viewportWidth * 0.1;
-  z-index: 1;
+  width: 40px;
+  z-index: 10;
   top: 0;
   bottom: 0;
   background: rgba(0,0,0,0.02);
@@ -133,24 +139,28 @@ ul.subjects {
 }
 
 i {
+  font-style: normal;
+  font-weight: bold;
+  color: #888;
+  font-size: 12px;
   display: inline-block;
   width: 24px;
   height: 24px;
   background-color: #ddd;
   border-radius: 24px;
   vertical-align: top;
+  text-align: center;
+  line-height: 24px;
 }
 
 ul.portals {
   
   i {
     position: relative;
-    left: -36px;
     margin-right: 10px;
-    -webkit-transition: left 0.2s;
     
-    .dragging &, .editPortals &, .manualBeam & {
-      left: 0; 
+    .animated & {
+      -webkit-transition: left 0.2s;
     }
   }
   
@@ -175,11 +185,17 @@ ul.portals {
   white-space: nowrap;
 }
 
+form {
+  margin: 0;
+  padding: 0.5em 0;
+}
+
 textarea {
+  display: block;
   width: 100%;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  margin: 0;
+  margin: 0 0 0.5em 0;
   padding: 0;
   border: 1px solid #ddd;
 }
