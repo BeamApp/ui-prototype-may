@@ -1,3 +1,6 @@
+#= require "vendor/jquery-1.9.1"
+#= require "vendor/jquery-ui"
+
 TOUCH = ('ontouchstart' of window) or ('onmsgesturechange' of window)
   
 BEAM_BY_LONGPRESS = false
