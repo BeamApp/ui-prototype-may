@@ -19,8 +19,8 @@ $ ->
     return unless e? and dragIndicator?
     
     dragIndicator.css
-      left: e.pageX - 12
-      top: e.pageY - 12
+      left: e.pageX
+      top: e.pageY
       
     true
   
@@ -78,28 +78,24 @@ $ ->
     dragIndicator.text($t.attr('title') ? $t.text())
     
     w = dragIndicator.outerWidth()
-    h = 24
+    lh = dragIndicator.css "line-height"
     
     dragIndicator.css
-      marginLeft: o.left - dragIntent.pageX + 12
-      marginTop: o.top - dragIntent.pageY + 12
-      padding: 0
+      marginLeft: o.left - dragIntent.pageX
+      marginTop: o.top - dragIntent.pageY
       width: $t.outerWidth()
-      height: $t.outerHeight()
       lineHeight: "#{$t.outerHeight()}px"
+      "-webkit-transform": "rotate(-5deg)"
       
     dest =
-      marginLeft: 0
+      marginLeft: -w / 2
       marginTop: 0
       width: w
-      height: h
-      opacity: 0.8
-      borderRadius: h
-      lineHeight: "#{h}px"
-      padding: "0 20px"
+      opacity: 1
+      lineHeight: lh
       color: "rgba(0,0,0,1)"
       
-    dragIndicator.animate dest, 150, "swing"
+    dragIndicator.animate dest, 200, "swing"
     
     moveDragIndicator dragIntent
     dragIntent = null

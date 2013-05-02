@@ -108,21 +108,25 @@ ul, li {
   list-style: none;
 }
 
+.panel() {
+  display: block;
+  
+  padding: 10px;
+  line-height: 24px; 
+
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  
+  background-image: -webkit-linear-gradient(top,
+      rgba(255,255,255,1) 0%,
+      rgba(250,250,250,1) 100%);
+}
+
 ul.subjects, ul.portals {
   li {
+    .panel();
     margin: 5px;
-    display: block;
-    
-    padding: 10px;
-    line-height: 24px; 
-
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    
-    background-image: -webkit-linear-gradient(top,
-        rgba(255,255,255,1) 0%,
-        rgba(250,250,250,1) 100%);
-    
+      
     &.dragHover {
       color: white;
       background-image: -webkit-linear-gradient(top,
@@ -178,13 +182,16 @@ ul.portals {
 }
 
 .drag {
-  display: block;
-  text-align: right;
-  padding: 0 20px;
-  height: 24px;
-  background: #ddd;
-  color: rgba(0,0,0,0);
+  .panel();
+  -webkit-transition: -webkit-transform 0.5s;
+  -webkit-transform-origin: 50% 0 0;
+  -webkit-transform: none;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
+  border-color: #aaa;
+  display: inline-block;
+  text-align: center;
   width: auto;
+  height: auto;
   position: absolute;
   left: 0;
   top: 0;
