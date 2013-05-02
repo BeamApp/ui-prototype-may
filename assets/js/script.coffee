@@ -56,7 +56,7 @@ class ViewModel extends ko.ViewModel
     super
     @left = @left.extend throttle: 1
   
-  @property "groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard")]
+  @property "groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard"), new SubjectGroup("Guru")]
   @property "portals", ["MacBook", "MacBook Pro", "Windows PC", "iPhone", "iPod", "iMac", "Car", "TV", "Windows Phone", "Nexus 7"]
   
   @property "dragging", false
@@ -148,4 +148,4 @@ class ViewModel extends ko.ViewModel
 $ ->
   window.vm = vm = new ViewModel
   ko.applyBindings vm
-  $(document).on "resize", -> vm.viewportWidth document.width
+  $(window).on "resize", -> vm.viewportWidth document.width
