@@ -1,5 +1,5 @@
-@viewportWidth: 320px;
-@viewportHeight: 400px;
+@viewportWidth: 100vw;
+@viewportHeight: 100vh;
 
 html, body {
   padding: 0;
@@ -55,8 +55,8 @@ body {
     z-index: 0;
     
     &#portal-page {
-      left: @viewportWidth - 40px; 
-      padding-left: 40px;
+      left: @viewportWidth * 0.8; 
+      padding-left: @viewportWidth * 0.2;
     }
     
     h1 {
@@ -78,6 +78,7 @@ body {
     
     .page-content {
       padding-top: 36px + 5px;
+      padding-bottom: 5px;
     }
     
     h2 {
@@ -131,7 +132,7 @@ ul, li {
 ul.subjects, ul.portals {
   li {
     .panel();
-    margin: 5px;
+    margin: 5px 5px 0 5px;
       
     &.dragHover {
       color: white;
