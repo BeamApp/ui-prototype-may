@@ -61,7 +61,7 @@ class ViewModel extends ko.ViewModel
   
   @property "dragging", false
   @property "swiping", false
-  @property "viewportWidth", 320
+  @property "viewportWidth", document.width
   
   @property "selectedSubject", null
   @property "detailedSubject", null
@@ -92,7 +92,7 @@ class ViewModel extends ko.ViewModel
       
   @accessor "iconLeft", ->
     return 0 if @detailedSubject()
-    progress = (-1 * @left() / 320)
+    progress = (-1 * @left() / @viewportWidth())
     -1 * (5 + 1 + 10 + 24 / 2 + 20) * (1 - progress)
   
   @property "_page", 0
@@ -146,5 +146,6 @@ class ViewModel extends ko.ViewModel
       "Your Portals"
 
 $ ->
-  window.vm = new ViewModel
+  window.vm = vm = new ViewModel
   ko.applyBindings vm
+  $(document).on "resize", -> vm.viewportWidth document.width
