@@ -28,6 +28,17 @@ Counter = ->
   i = 0
   -> i++
   
+Math.clamp ?= (min, max, v) ->
+  if max < min
+    t = min
+    min = max
+    max = t
+    
+  Math.min(max, Math.max(min, v))
+  
+Math.sinh ?= (arg) ->
+ (Math.exp(arg) - Math.exp(-arg)) / 2
+  
 next = new Counter
   
 class SubjectGroup extends ko.ViewModel
@@ -40,11 +51,17 @@ class SubjectGroup extends ko.ViewModel
     @items.push "Subject #{next() + 1}" for i in [1,2,3,4]
 
 class ViewModel extends ko.ViewModel
+  
+  constructor: ->
+    super
+    @left = @left.extend throttle: 1
+  
   @property "groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard")]
-  @property "portals", ["MBP 1", "MBP 2", "MBP 3", "iPhone", "iPod", "iMac", "Car", "TV"]
+  @property "portals", ["MacBook", "MacBook Pro", "Windows PC", "iPhone", "iPod", "iMac", "Car", "TV", "Windows Phone", "Nexus 7"]
   
   @property "dragging", false
   @property "swiping", false
+  @property "viewportWidth", 320
   
   @property "selectedSubject", null
   @property "detailedSubject", null
@@ -58,10 +75,20 @@ class ViewModel extends ko.ViewModel
   
   @property "_left", 0
   @accessor "left", ->
-    if @swiping()
-      Math.min(10, Math.max(-320, @_left()))
-    else
-      -1 * @page() * 320
+    regular = -1 * @page() * @viewportWidth()
+    regular += @_left() if @swiping()
+    
+    l = 10
+    
+    if regular > 0
+      x = regular
+      regular = Math.atan(x / l) * l
+    else if regular < -@viewportWidth()
+      x = -1 * (regular + @viewportWidth())
+      x = Math.atan(x / l) * l
+      regular = -1 * (x + @viewportWidth())
+      
+    regular
       
   @accessor "iconLeft", ->
     return 0 if @detailedSubject()
@@ -86,21 +113,35 @@ class ViewModel extends ko.ViewModel
   
   onTap: (item) =>
     @detailedSubject item
+  
+  onPortalClicked: (item) =>
+    if @selectedSubject()
+      @onBeam()
+  
+  onBeam: (item) =>
+    @selectedSubject null
+    
+    self = $("<div>")
+      .text("Beamed!")
+      .addClass("message")
+      .prependTo("body")
+      .css(opacity: 0)
+      .fadeTo(100, 1)
+      .delay(500)
+      .fadeOut 100, ->
+        self.remove()
     
   onCancelDetail: =>
     @detailedSubject null
     
   onSubmitDetail: =>
+    $(":focus").blur()
     @selectedSubject @detailedSubject()
     @detailedSubject null
   
   @accessor "secondPageTitle", ->
-    if @swiping()
-      "Portals"
-    else if @dragging()
+    if @dragging() or @selectedSubject()
       "...to..."
-    else if @selectedSubject()
-      "Beam X to..."
     else
       "Your Portals"
 

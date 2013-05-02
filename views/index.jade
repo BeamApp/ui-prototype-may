@@ -6,7 +6,7 @@ block body
   .pages.animated(data-bind="left: left, css: { editing: detailedSubject }")
     #subject-page.page
       h1 Beam...
-      div(data-bind="foreach: groupedSubjects")
+      .page-content(data-bind="foreach: groupedSubjects")
         h2(data-bind="text: title")
         ul.subjects(data-bind="foreach: items")
           li(data-bind="click: ko.caller($root.onTap, $data), attr: { title: $data }, css: { active: ko.eq($root.detailedSubject, $data), draggable: ko.not($root.detailedSubject) }")
@@ -19,7 +19,8 @@ block body
                 a(href="#", data-bind="click: $root.onCancelDetail") cancel
     #portal-page.page
       h1(data-bind="text: secondPageTitle")
-      ul.portals(data-bind="foreach: portals")
-        li
-          i(data-bind="left: $root.iconLeft, text: $index")
-          span(data-bind="text: $data")
+      .page-content
+        ul.portals(data-bind="foreach: portals")
+          li(data-bind="click: ko.caller($root.onPortalClicked, $data)")
+            i(data-bind="left: $root.iconLeft, text: $index")
+            span(data-bind="text: $data")

@@ -28,6 +28,7 @@ $ ->
     $(e.target).addClass("dragHover")
   
     dragIntent = new DragIntent e
+    dragIntent.isMaybeDrag = $(e.target).parents().andSelf().is(".draggable")
       
     if BEAM_BY_LONGPRESS
       dragIntent.timeout = setTimeout _beginDrag, 250
@@ -50,7 +51,7 @@ $ ->
     dx = dragIntent.diff().dx
     e.preventDefault()
     
-    if dragIntent.isMaybeTap and dx > 0
+    if dragIntent.isMaybeTap and dragIntent.isMaybeDrag and dx > 0
       dragIntent.detected = "drag"
       _beginDrag()
     else
@@ -73,7 +74,7 @@ $ ->
       .addClass("drag")
       .appendTo("body")
     
-    $t = $(dragIntent.target)
+    $t = $(dragIntent.target).closest(".draggable")
     o = $t.offset()
     dragIndicator.text($t.attr('title') ? $t.text())
     
@@ -165,16 +166,17 @@ $ ->
     e.preventDefault()
     return
   
-  $d.on "mousedown", ".subjects li", (e) ->
-    unless $(e.target).is ":input, a"
-      beginDrag e
+  $d.on "mousedown", ".page", (e) ->
+    beginDrag e unless $(e.target).is ":input, a"
+    return
   
   $d.on "mouseup", ".portals li", ->
-    log "BEAM!" if dragging
-    true
+    window.vm.onBeam() if dragging  
+    return
     
   $d.on "mouseup", (e) ->
-    setTimeout (-> endDrag(e)), 0
+    endDrag e
+    return
    
   # mouse emulation
   
@@ -186,7 +188,7 @@ $ ->
     if touchEvent.touches?.length > 0
       x = touchEvent.touches[0].pageX
       y = touchEvent.touches[0].pageY
-    else if touchEvent.changedTouches?.lenght > 0
+    else if touchEvent.changedTouches?.length > 0
       x = touchEvent.changedTouches[0].pageX
       y = touchEvent.changedTouches[0].pageY
     else
@@ -256,8 +258,13 @@ $ ->
     
     touchEntered = $([])
     up = $.Event('mouseup')
+    
     copyCoords e.originalEvent, up
-    $(e.target).trigger up
+    
+    el = document.elementFromPoint up.pageX, up.pageY
+    $(el).trigger up
+    
+    # $(e.target).trigger up
     
     if up.isDefaultPrevented()
       e.preventDefault()
