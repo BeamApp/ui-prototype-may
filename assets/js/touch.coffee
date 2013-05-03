@@ -157,12 +157,13 @@ $ ->
       # nothing to do
     else if not dragIntent or dragIntent.isTap()
       
-      defaultPrevented = true
+      defaultPrevented = false
       
       for eventType in ['tap', 'click']
-        afterEvent = $.Event eventType
-        $t.trigger afterEvent 
-        defaultPrevented and= afterEvent.isDefaultPrevented()
+        unless defaultPrevented
+          afterEvent = $.Event eventType
+          $t.trigger afterEvent 
+          defaultPrevented or= afterEvent.isDefaultPrevented()
       
       return if $t.is "textarea"
       

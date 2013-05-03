@@ -34,20 +34,20 @@ $(document).on "keydown", (e) ->
   return
   
 ko.bindingHandlers.tap =
-  update: (element, valueAccessor) ->
+  init: (element, valueAccessor) ->
     callback = ko.unwrapObservable valueAccessor()    
     $(element).on "tap", (e) ->
-      e?.preventDefault?() if $(this).is("a")
-      e?.stopPropagation()
+      e.preventDefault()
+      e.stopPropagation()
       return if window.vm.swiping() or window.vm.dragging()
       callback()
       
 ko.bindingHandlers.click =
-  update: (element, valueAccessor) ->
+  init: (element, valueAccessor) ->
     callback = ko.unwrapObservable valueAccessor()
     $(element).on "click", (e) ->
-      e?.preventDefault?() if $(this).is("a")
-      e?.stopPropagation()
+      e.preventDefault() if $(this).is("a")
+      e.stopPropagation()
       return if window.vm.swiping() or window.vm.dragging()
       callback()
 
@@ -177,6 +177,8 @@ class ViewModel extends ko.ViewModel
     @detailedSubject null
     
   onSubmitDetail: =>
+    return unless @detailedSubject()
+    
     $(":focus").blur()
     @selectedSubject @detailedSubject()
     @detailedSubject null

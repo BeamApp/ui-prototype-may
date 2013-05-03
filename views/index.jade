@@ -14,7 +14,7 @@ block body
             form(data-bind="slideVisible: ko.eq($root.detailedSubject, $data), submit: $root.onSubmitDetail")
               textarea
               div
-                input(type="submit", value="Choose target")
+                input(type="submit", value="Choose target", data-bind="tap: $root.onSubmitDetail")
                 span  or 
                 a(href="#", data-bind="tap: $root.onCancelDetail") cancel
     #portal-page.page
