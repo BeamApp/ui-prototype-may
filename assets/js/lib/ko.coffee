@@ -56,17 +56,17 @@ ko.bindingHandlers.width =
     
     if width and isFinite width
       width = Math.max(0, Math.min(1, width)) * 100
-      $(element).css(width: "#{width}%")
+      element.style.width ="#{width}%"
     else
-      $(element).css(width: '')
+      element.style.width = ''
 
 ko.bindingHandlers.left =
   update: (element, valueAccessor) ->
     left = ko.unwrapObservable valueAccessor()
     if left and isFinite left
-      $(element).css left: left
+      element.style.left = "#{left}px"
     else
-      $(element).css left: ''
+      element.style.left = ''
 
 ko.bindingHandlers.visibility =
   init: -> ko.bindingHandlers.visibility.update(arguments...)
