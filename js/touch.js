@@ -65,6 +65,7 @@
         }
         if (dragIntent.isVertical()) {
           dragIntent.detected = "scroll";
+          dragIntent.isMaybeTap = dragIntent.isMaybeDrag = dragIntent.isMaybeSwipe = false;
         }
       }
       if (dragIntent.detected === "scroll") {
