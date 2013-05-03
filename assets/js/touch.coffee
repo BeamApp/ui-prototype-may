@@ -33,10 +33,12 @@ $ ->
     true
   
   beginDrag = (e) ->
-    $(e.target).addClass("dragHover")
+    chain = $(e.target).parents().andSelf()
+    chain.filter(".draggable").addClass "dragHover"
   
     dragIntent = new DragIntent e
-    dragIntent.isMaybeDrag = $(e.target).parents().andSelf().is(".draggable")
+    dragIntent.isMaybeDrag = chain.is(".draggable")
+    dragIntent.isMaybeSwipe = chain.is(".swipeable")
       
     if BEAM_BY_LONGPRESS
       dragIntent.timeout = setTimeout _beginDrag, 250
@@ -62,7 +64,7 @@ $ ->
     if dragIntent.isMaybeTap and dragIntent.isMaybeDrag and dx > 0
       dragIntent.detected = "drag"
       _beginDrag()
-    else
+    else if dragIntent.isMaybeSwipe
       dragIntent.detected = "swipe"
       dragIntent.isMaybeTap = dragIntent.isMaybeDrag = false
       $(".pages").removeClass('animated')

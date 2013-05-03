@@ -3,7 +3,7 @@ extends layout
 block body
   a.left-edge(data-bind="visible: hasPrevious, click: onPrevious")
   a.right-edge(data-bind="visible: hasNext, click: onNext")
-  .pages.animated(data-bind="left: left, css: { editing: detailedSubject }")
+  .pages.animated(data-bind="left: left, css: { editing: detailedSubject, swipeable: isSwipeable }")
     #subject-page.page
       h1 Beam...
       .page-content(data-bind="foreach: groupedSubjects")

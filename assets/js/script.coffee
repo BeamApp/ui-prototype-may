@@ -100,6 +100,8 @@ class ViewModel extends ko.ViewModel
   @property "swiping", false
   @property "viewportWidth", document.width
   
+  @accessor "isSwipeable", -> not @detailedSubject()
+  
   @property "detailedSubject", null
   @property "selectedSubject", null
   
