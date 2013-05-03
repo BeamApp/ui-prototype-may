@@ -168,13 +168,15 @@
       if (dragging) {
 
       } else if (!dragIntent || dragIntent.isTap()) {
-        defaultPrevented = true;
+        defaultPrevented = false;
         _ref = ['tap', 'click'];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           eventType = _ref[_i];
-          afterEvent = $.Event(eventType);
-          $t.trigger(afterEvent);
-          defaultPrevented && (defaultPrevented = afterEvent.isDefaultPrevented());
+          if (!defaultPrevented) {
+            afterEvent = $.Event(eventType);
+            $t.trigger(afterEvent);
+            defaultPrevented || (defaultPrevented = afterEvent.isDefaultPrevented());
+          }
         }
         if ($t.is("textarea")) {
           return;

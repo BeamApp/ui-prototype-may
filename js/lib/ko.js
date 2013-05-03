@@ -88,13 +88,9 @@
       width = ko.utils.unwrapObservable(valueAccessor());
       if (width && isFinite(width)) {
         width = Math.max(0, Math.min(1, width)) * 100;
-        return $(element).css({
-          width: "" + width + "%"
-        });
+        return element.style.width = "" + width + "%";
       } else {
-        return $(element).css({
-          width: ''
-        });
+        return element.style.width = '';
       }
     }
   };
@@ -105,13 +101,9 @@
 
       left = ko.unwrapObservable(valueAccessor());
       if (left && isFinite(left)) {
-        return $(element).css({
-          left: left
-        });
+        return element.style.left = "" + left + "px";
       } else {
-        return $(element).css({
-          left: ''
-        });
+        return element.style.left = '';
       }
     }
   };

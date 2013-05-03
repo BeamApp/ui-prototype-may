@@ -47,21 +47,13 @@
   });
 
   ko.bindingHandlers.tap = {
-    update: function(element, valueAccessor) {
+    init: function(element, valueAccessor) {
       var callback;
 
       callback = ko.unwrapObservable(valueAccessor());
       return $(element).on("tap", function(e) {
-        if ($(this).is("a")) {
-          if (e != null) {
-            if (typeof e.preventDefault === "function") {
-              e.preventDefault();
-            }
-          }
-        }
-        if (e != null) {
-          e.stopPropagation();
-        }
+        e.preventDefault();
+        e.stopPropagation();
         if (window.vm.swiping() || window.vm.dragging()) {
           return;
         }
@@ -71,21 +63,15 @@
   };
 
   ko.bindingHandlers.click = {
-    update: function(element, valueAccessor) {
+    init: function(element, valueAccessor) {
       var callback;
 
       callback = ko.unwrapObservable(valueAccessor());
       return $(element).on("click", function(e) {
         if ($(this).is("a")) {
-          if (e != null) {
-            if (typeof e.preventDefault === "function") {
-              e.preventDefault();
-            }
-          }
+          e.preventDefault();
         }
-        if (e != null) {
-          e.stopPropagation();
-        }
+        e.stopPropagation();
         if (window.vm.swiping() || window.vm.dragging()) {
           return;
         }
@@ -302,6 +288,9 @@
     };
 
     ViewModel.prototype.onSubmitDetail = function() {
+      if (!this.detailedSubject()) {
+        return;
+      }
       $(":focus").blur();
       this.selectedSubject(this.detailedSubject());
       return this.detailedSubject(null);
