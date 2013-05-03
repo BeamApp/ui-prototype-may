@@ -1,13 +1,49 @@
 (function() {
-  var Counter, SubjectGroup, ViewModel, next, _ref, _ref1,
+  var Counter, KEYBOARD, SubjectGroup, TOUCH, ViewModel, next, _ref, _ref1,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  $(window).keydown(function(e) {
-    if (e.keyCode === 32) {
-      debugger;
+  TOUCH = ('ontouchstart' in window) || ('onmsgesturechange' in window);
+
+  KEYBOARD = !TOUCH;
+
+  $(document).on("keydown", function(e) {
+    var _ref;
+
+    if ($(e.target).is(":input")) {
+      return;
     }
+    switch ((_ref = e.which) != null ? _ref : e.keyCode) {
+      case 8:
+      case 46:
+        vm.onBack();
+        break;
+      case 13:
+        vm.onAction();
+        break;
+      case 32:
+        vm.onSelect();
+        break;
+      case 37:
+        vm.onLeft();
+        break;
+      case 38:
+        vm.onUp();
+        break;
+      case 39:
+        vm.onRight();
+        break;
+      case 40:
+        vm.onDown();
+        break;
+      case 96:
+        debugger;
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
   });
 
   ko.bindingHandlers.tap = {
@@ -124,6 +160,18 @@
 
     ViewModel.property("groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard"), new SubjectGroup("Guru")]);
 
+    ViewModel.accessor("flatSubjects", function() {
+      var group, result, _i, _len, _ref2;
+
+      result = [];
+      _ref2 = this.groupedSubjects();
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        group = _ref2[_i];
+        result = result.concat(group.items());
+      }
+      return result;
+    });
+
     ViewModel.property("portals", ["MacBook", "MacBook Pro", "Windows PC", "iPhone", "iPod", "iMac", "Car", "TV", "Windows Phone", "Nexus 7"]);
 
     ViewModel.property("dragging", false);
@@ -132,11 +180,33 @@
 
     ViewModel.property("viewportWidth", document.width);
 
-    ViewModel.property("selectedSubject", null);
-
     ViewModel.property("detailedSubject", null);
 
-    ViewModel.property("draggedSubject", null);
+    ViewModel.property("selectedSubject", null);
+
+    ViewModel.property("_focusedSubjectIndex", 0);
+
+    ViewModel.accessor("focusedSubjectIndex", function(v) {
+      return Math.clamp(0, this.flatSubjects().length - 1, this._focusedSubjectIndex());
+    });
+
+    ViewModel.accessor("focusedSubject", function() {
+      if (KEYBOARD && !(this.detailedSubject() || this.selectedSubject())) {
+        return this.flatSubjects()[this.focusedSubjectIndex()];
+      }
+    });
+
+    ViewModel.property("_focusedPortalIndex", 0);
+
+    ViewModel.accessor("focusedPortalIndex", function(v) {
+      return Math.clamp(0, this.portals().length - 1, this._focusedPortalIndex());
+    });
+
+    ViewModel.accessor("focusedPortal", function() {
+      if (KEYBOARD && !this.dragging()) {
+        return this.portals()[this.focusedPortalIndex()];
+      }
+    });
 
     ViewModel.accessor("hasNext", function() {
       return !this.dragging() && !this.swiping() && this.page() === 0 && !this.detailedSubject();
@@ -155,7 +225,7 @@
       if (this.swiping()) {
         regular += this._left();
       }
-      l = 10;
+      l = document.width * 0.33;
       if (regular > 0) {
         x = regular;
         regular = Math.atan(x / l) * l;
@@ -236,6 +306,51 @@
         return "Your Portals";
       }
     });
+
+    ViewModel.prototype.onUp = function() {
+      if (this.page() === 0) {
+        return this._focusedSubjectIndex(this.focusedSubjectIndex() - 1);
+      } else {
+        return this._focusedPortalIndex(this.focusedPortalIndex() - 1);
+      }
+    };
+
+    ViewModel.prototype.onDown = function() {
+      if (this.page() === 0) {
+        return this._focusedSubjectIndex(this.focusedSubjectIndex() + 1);
+      } else {
+        return this._focusedPortalIndex(this.focusedPortalIndex() + 1);
+      }
+    };
+
+    ViewModel.prototype.onLeft = function() {
+      return this._page(0);
+    };
+
+    ViewModel.prototype.onRight = function() {
+      return this._page(1);
+    };
+
+    ViewModel.prototype.onSelect = function() {
+      if (this.page() === 0) {
+        return this.detailedSubject(this.focusedSubject());
+      } else if (this.selectedSubject()) {
+        return this.onBeam();
+      }
+    };
+
+    ViewModel.prototype.onAction = function() {
+      if (this.page() === 0) {
+        return this.selectedSubject(this.focusedSubject());
+      } else if (this.selectedSubject()) {
+        return this.onBeam();
+      }
+    };
+
+    ViewModel.prototype.onBack = function() {
+      this._page(0);
+      return this.selectedSubject(null);
+    };
 
     return ViewModel;
 

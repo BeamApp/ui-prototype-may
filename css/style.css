@@ -123,7 +123,9 @@ ul.portals li {
   margin: 5px 5px 0 5px;
 }
 ul.subjects li.dragHover,
-ul.portals li.dragHover {
+ul.portals li.dragHover,
+ul.subjects li.focused,
+ul.portals li.focused {
   color: white;
   background-image: -webkit-linear-gradient(top, #62baec 0%, #1280d3 100%);
 }
