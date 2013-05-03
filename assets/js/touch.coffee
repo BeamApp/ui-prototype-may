@@ -1,6 +1,10 @@
 TOUCH = ('ontouchstart' of window) or ('onmsgesturechange' of window)
   
 BEAM_BY_LONGPRESS = false
+
+defer = (f) ->
+  scheduler = webkitRequestAnimationFrame ? setTimeout
+  scheduler f, 0
     
 log = (msg) ->
   console.log arguments...
@@ -107,11 +111,12 @@ $ ->
     
     true
     
-  endDrag = ->
+  endDrag = (e) ->
     if dragIntent?
       clearTimeout dragIntent.timeout
       dragIntent = null
   
+    e?.preventDefault()
     dragging = false
     window.vm.dragging false
     
@@ -146,18 +151,22 @@ $ ->
       checkDrag e
   
   $d.on "mouseup", (e) ->
-    if dragging
-      e.preventDefault()
-      return
-      
     $t = $(e.target)
-
-    if not dragIntent or dragIntent.isTap()
-      click = $.Event('click')
-      $t.trigger click
+    
+    if dragging
+      # nothing to do
+    else if not dragIntent or dragIntent.isTap()
+      
+      defaultPrevented = true
+      
+      for eventType in ['tap', 'click']
+        afterEvent = $.Event eventType
+        $t.trigger afterEvent 
+        defaultPrevented and= afterEvent.isDefaultPrevented()
+      
       return if $t.is "textarea"
       
-      if $t.is "input[type=submit]:enabled" and not click.isDefaultPrevented()
+      if $t.is "input[type=submit]:enabled" and not defaultPrevented
         $t.closest("form").trigger("submit")
         
     else if dragIntent?.isSwipe()
@@ -167,6 +176,7 @@ $ ->
       else if dx > 0
         window.vm.onPrevious()
     
+    endDrag e
     e.preventDefault()
     return
   
@@ -177,11 +187,7 @@ $ ->
   $d.on "mouseup", ".portals li", ->
     window.vm.onBeam() if dragging  
     return
-    
-  $d.on "mouseup", (e) ->
-    endDrag e
-    return
-   
+
   # mouse emulation
   
   touchEntered = $([])

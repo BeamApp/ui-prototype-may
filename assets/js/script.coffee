@@ -37,7 +37,9 @@ ko.bindingHandlers.tap =
   update: (element, valueAccessor) ->
     callback = ko.unwrapObservable valueAccessor()    
     $(element).on "tap", (e) ->
-      e?.preventDefault?()
+      e?.preventDefault?() if $(this).is("a")
+      e?.stopPropagation()
+      return if window.vm.swiping() or window.vm.dragging()
       callback()
       
 ko.bindingHandlers.click =
@@ -79,7 +81,7 @@ class ViewModel extends ko.ViewModel
   
   constructor: ->
     super
-    @left = @left.extend throttle: 1
+    @left = @left.extend throttle: 5
   
   @property "groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard"), new SubjectGroup("Guru")]
   @accessor "flatSubjects", ->
