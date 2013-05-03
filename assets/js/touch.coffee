@@ -53,6 +53,7 @@ $ ->
     
       if dragIntent.isVertical()
         dragIntent.detected = "scroll"
+        dragIntent.isMaybeTap = dragIntent.isMaybeDrag = dragIntent.isMaybeSwipe = false
         
     # log "LOCKED: " + dragIntent.detected
     
