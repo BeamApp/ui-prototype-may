@@ -1,6 +1,6 @@
 TOUCH = ('ontouchstart' of window) or ('onmsgesturechange' of window)
   
-BEAM_BY_LONGPRESS = false
+BEAM_BY_LONGPRESS = true
 
 defer = (f) ->
   scheduler = webkitRequestAnimationFrame ? setTimeout
@@ -64,13 +64,13 @@ $ ->
       _beginDrag()
     else
       dragIntent.detected = "swipe"
-      dragIntent.isMaybeTap = false
+      dragIntent.isMaybeTap = dragIntent.isMaybeDrag = false
       $(".pages").removeClass('animated')
       window.vm.swiping true
       window.vm._left dx
     
   _beginDrag = ->
-    return unless dragIntent
+    return unless dragIntent?.isMaybeDrag
     
     clearTimeout dragIntent.timeout if dragIntent.timeout 
     
@@ -86,7 +86,9 @@ $ ->
     o = $t.offset()
     dragIndicator.text($t.attr('title') ? $t.text())
     
-    w = dragIndicator.outerWidth()
+    w = dragIndicator.width()
+    ow = dragIndicator.outerWidth()
+    h = dragIndicator.outerHeight()
     lh = dragIndicator.css "line-height"
     
     dragIndicator.css
@@ -97,8 +99,9 @@ $ ->
       "-webkit-transform": "rotate(-5deg)"
       
     dest =
-      marginLeft: -w / 2
-      marginTop: 0
+      marginLeft: -ow / 2
+      marginRight: 0
+      marginTop: - h - 10
       width: w
       opacity: 1
       lineHeight: lh

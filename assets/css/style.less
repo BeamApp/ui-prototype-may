@@ -191,7 +191,7 @@ ul.portals {
 .drag {
   .panel();
   -webkit-transition: -webkit-transform 0.5s;
-  -webkit-transform-origin: 50% 0 0;
+  -webkit-transform-origin: 50% 100% 0;
   -webkit-transform: none;
   box-shadow: -2px 2px 5px rgba(0,0,0,0.1);
   border-color: #aaa;
@@ -221,6 +221,8 @@ ul.portals {
   color: #fff;
   text-align: center;
   z-index: 1005;
+  -webkit-pointer-events: none;
+  pointer-events: none;
 }
 
 form {

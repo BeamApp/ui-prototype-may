@@ -6,12 +6,14 @@
 
 TOUCH = ('ontouchstart' of window) or ('onmsgesturechange' of window)
 KEYBOARD = not TOUCH
-
+  
 $(document).on "keydown", (e) ->
+  # debugger if (e.which ? e.keyCode) is 32
   return if $(e.target).is(":input")
   
   switch e.which ? e.keyCode
     when 8, 46 # backspace
+      debugger
       vm.onBack()
     when 13 # enter/return
       vm.onAction()
@@ -25,7 +27,7 @@ $(document).on "keydown", (e) ->
       vm.onRight()
     when 40 # down
       vm.onDown()
-    when 96 # numpad 0
+    when 68 # 'd'
       debugger
     else
       return
