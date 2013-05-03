@@ -1,10 +1,17 @@
 (function() {
-  var BEAM_BY_LONGPRESS, TOUCH, log,
+  var BEAM_BY_LONGPRESS, TOUCH, defer, log,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   TOUCH = ('ontouchstart' in window) || ('onmsgesturechange' in window);
 
   BEAM_BY_LONGPRESS = false;
+
+  defer = function(f) {
+    var scheduler;
+
+    scheduler = typeof webkitRequestAnimationFrame !== "undefined" && webkitRequestAnimationFrame !== null ? webkitRequestAnimationFrame : setTimeout;
+    return scheduler(f, 0);
+  };
 
   log = function(msg) {
     console.log.apply(console, arguments);
@@ -110,12 +117,15 @@
       dragIntent = null;
       return true;
     };
-    endDrag = function() {
+    endDrag = function(e) {
       var oldIndicator;
 
       if (dragIntent != null) {
         clearTimeout(dragIntent.timeout);
         dragIntent = null;
+      }
+      if (e != null) {
+        e.preventDefault();
       }
       dragging = false;
       window.vm.dragging(false);
@@ -152,20 +162,24 @@
       }
     });
     $d.on("mouseup", function(e) {
-      var $t, click, dx;
+      var $t, afterEvent, defaultPrevented, dx, eventType, _i, _len, _ref;
 
-      if (dragging) {
-        e.preventDefault();
-        return;
-      }
       $t = $(e.target);
-      if (!dragIntent || dragIntent.isTap()) {
-        click = $.Event('click');
-        $t.trigger(click);
+      if (dragging) {
+
+      } else if (!dragIntent || dragIntent.isTap()) {
+        defaultPrevented = true;
+        _ref = ['tap', 'click'];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          eventType = _ref[_i];
+          afterEvent = $.Event(eventType);
+          $t.trigger(afterEvent);
+          defaultPrevented && (defaultPrevented = afterEvent.isDefaultPrevented());
+        }
         if ($t.is("textarea")) {
           return;
         }
-        if ($t.is("input[type=submit]:enabled" && !click.isDefaultPrevented())) {
+        if ($t.is("input[type=submit]:enabled" && !defaultPrevented)) {
           $t.closest("form").trigger("submit");
         }
       } else if (dragIntent != null ? dragIntent.isSwipe() : void 0) {
@@ -176,6 +190,7 @@
           window.vm.onPrevious();
         }
       }
+      endDrag(e);
       e.preventDefault();
     });
     $d.on("mousedown", ".page", function(e) {
@@ -187,9 +202,6 @@
       if (dragging) {
         window.vm.onBeam();
       }
-    });
-    $d.on("mouseup", function(e) {
-      endDrag(e);
     });
     touchEntered = $([]);
     copyCoords = function(touchEvent, mouseEvent) {

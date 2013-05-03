@@ -52,10 +52,18 @@
 
       callback = ko.unwrapObservable(valueAccessor());
       return $(element).on("tap", function(e) {
-        if (e != null) {
-          if (typeof e.preventDefault === "function") {
-            e.preventDefault();
+        if ($(this).is("a")) {
+          if (e != null) {
+            if (typeof e.preventDefault === "function") {
+              e.preventDefault();
+            }
           }
+        }
+        if (e != null) {
+          e.stopPropagation();
+        }
+        if (window.vm.swiping() || window.vm.dragging()) {
+          return;
         }
         return callback();
       });
@@ -154,7 +162,7 @@
       this.onPrevious = __bind(this.onPrevious, this);
       this.onNext = __bind(this.onNext, this);      ViewModel.__super__.constructor.apply(this, arguments);
       this.left = this.left.extend({
-        throttle: 1
+        throttle: 5
       });
     }
 
