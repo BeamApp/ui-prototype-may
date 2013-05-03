@@ -4,7 +4,7 @@
 
   TOUCH = ('ontouchstart' in window) || ('onmsgesturechange' in window);
 
-  BEAM_BY_LONGPRESS = false;
+  BEAM_BY_LONGPRESS = true;
 
   defer = function(f) {
     var scheduler;
@@ -41,9 +41,13 @@
       return true;
     };
     beginDrag = function(e) {
-      $(e.target).addClass("dragHover");
+      var chain;
+
+      chain = $(e.target).parents().andSelf();
+      chain.filter(".draggable").addClass("dragHover");
       dragIntent = new DragIntent(e);
-      dragIntent.isMaybeDrag = $(e.target).parents().andSelf().is(".draggable");
+      dragIntent.isMaybeDrag = chain.is(".draggable");
+      dragIntent.isMaybeSwipe = chain.is(".swipeable");
       if (BEAM_BY_LONGPRESS) {
         return dragIntent.timeout = setTimeout(_beginDrag, 250);
       }
@@ -71,18 +75,18 @@
       if (dragIntent.isMaybeTap && dragIntent.isMaybeDrag && dx > 0) {
         dragIntent.detected = "drag";
         return _beginDrag();
-      } else {
+      } else if (dragIntent.isMaybeSwipe) {
         dragIntent.detected = "swipe";
-        dragIntent.isMaybeTap = false;
+        dragIntent.isMaybeTap = dragIntent.isMaybeDrag = false;
         $(".pages").removeClass('animated');
         window.vm.swiping(true);
         return window.vm._left(dx);
       }
     };
     _beginDrag = function() {
-      var $t, dest, lh, o, w, _ref;
+      var $t, dest, h, lh, o, ow, w, _ref;
 
-      if (!dragIntent) {
+      if (!(dragIntent != null ? dragIntent.isMaybeDrag : void 0)) {
         return;
       }
       if (dragIntent.timeout) {
@@ -95,7 +99,9 @@
       $t = $(dragIntent.target).closest(".draggable");
       o = $t.offset();
       dragIndicator.text((_ref = $t.attr('title')) != null ? _ref : $t.text());
-      w = dragIndicator.outerWidth();
+      w = dragIndicator.width();
+      ow = dragIndicator.outerWidth();
+      h = dragIndicator.outerHeight();
       lh = dragIndicator.css("line-height");
       dragIndicator.css({
         marginLeft: o.left - dragIntent.pageX,
@@ -105,8 +111,9 @@
         "-webkit-transform": "rotate(-5deg)"
       });
       dest = {
-        marginLeft: -w / 2,
-        marginTop: 0,
+        marginLeft: -ow / 2,
+        marginRight: 0,
+        marginTop: -h - 10,
         width: w,
         opacity: 1,
         lineHeight: lh,

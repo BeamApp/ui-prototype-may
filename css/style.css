@@ -172,7 +172,7 @@ ul.portals .dragHover i {
   border-radius: 3px;
   background-image: -webkit-linear-gradient(top, #ffffff 0%, #fafafa 100%);
   -webkit-transition: -webkit-transform 0.5s;
-  -webkit-transform-origin: 50% 0 0;
+  -webkit-transform-origin: 50% 100% 0;
   -webkit-transform: none;
   box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
   border-color: #aaa;
@@ -200,6 +200,8 @@ ul.portals .dragHover i {
   color: #fff;
   text-align: center;
   z-index: 1005;
+  -webkit-pointer-events: none;
+  pointer-events: none;
 }
 form {
   margin: 0;

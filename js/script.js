@@ -17,6 +17,7 @@
     switch ((_ref = e.which) != null ? _ref : e.keyCode) {
       case 8:
       case 46:
+        debugger;
         vm.onBack();
         break;
       case 13:
@@ -37,7 +38,7 @@
       case 40:
         vm.onDown();
         break;
-      case 96:
+      case 68:
         debugger;
         break;
       default:
@@ -173,6 +174,10 @@
     ViewModel.property("swiping", false);
 
     ViewModel.property("viewportWidth", document.width);
+
+    ViewModel.accessor("isSwipeable", function() {
+      return !this.detailedSubject();
+    });
 
     ViewModel.property("detailedSubject", null);
 
