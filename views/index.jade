@@ -9,7 +9,7 @@ block body
       .page-content(data-bind="foreach: groupedSubjects")
         h2(data-bind="text: title")
         ul.subjects(data-bind="foreach: items")
-          li(data-bind="click: ko.caller($root.onTap, $data), attr: { title: $data }, css: { active: ko.eq($root.detailedSubject, $data), draggable: ko.not($root.detailedSubject) }")
+          li(data-bind="click: ko.caller($root.onTap, $data), attr: { title: $data }, css: { active: ko.eq($root.detailedSubject, $data), draggable: ko.not($root.detailedSubject), focused: ko.eq($data, $root.focusedSubject) }")
             span(data-bind="text: $data")
             form(data-bind="slideVisible: ko.eq($root.detailedSubject, $data), submit: $root.onSubmitDetail")
               textarea
@@ -21,6 +21,6 @@ block body
       h1(data-bind="text: secondPageTitle")
       .page-content
         ul.portals(data-bind="foreach: portals")
-          li(data-bind="click: ko.caller($root.onPortalClicked, $data)")
+          li(data-bind="click: ko.caller($root.onPortalClicked, $data), css: { focused: ko.eq($data, $root.focusedPortal) }")
             i(data-bind="left: $root.iconLeft, text: $index")
             span(data-bind="text: $data")

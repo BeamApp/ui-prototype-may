@@ -4,9 +4,34 @@
 #= require_tree "lib"
 #= require "touch"
 
-# debug on SPACE  
-$(window).keydown (e) ->
-  debugger if e.keyCode is 32
+TOUCH = ('ontouchstart' of window) or ('onmsgesturechange' of window)
+KEYBOARD = not TOUCH
+
+$(document).on "keydown", (e) ->
+  return if $(e.target).is(":input")
+  
+  switch e.which ? e.keyCode
+    when 8, 46 # backspace
+      vm.onBack()
+    when 13 # enter/return
+      vm.onAction()
+    when 32 # space
+      vm.onSelect()
+    when 37 # left
+      vm.onLeft()
+    when 38 # up
+      vm.onUp()
+    when 39 # right
+      vm.onRight()
+    when 40 # down
+      vm.onDown()
+    when 96 # numpad 0
+      debugger
+    else
+      return
+      
+  e.preventDefault()
+  return
   
 ko.bindingHandlers.tap =
   update: (element, valueAccessor) ->
@@ -57,15 +82,30 @@ class ViewModel extends ko.ViewModel
     @left = @left.extend throttle: 1
   
   @property "groupedSubjects", [new SubjectGroup("Safari"), new SubjectGroup("Clipboard"), new SubjectGroup("Guru")]
+  @accessor "flatSubjects", ->
+    result = []
+    
+    for group in @groupedSubjects()
+      result = result.concat group.items()
+      
+    result
+    
   @property "portals", ["MacBook", "MacBook Pro", "Windows PC", "iPhone", "iPod", "iMac", "Car", "TV", "Windows Phone", "Nexus 7"]
   
   @property "dragging", false
   @property "swiping", false
   @property "viewportWidth", document.width
   
-  @property "selectedSubject", null
   @property "detailedSubject", null
-  @property "draggedSubject", null
+  @property "selectedSubject", null
+  
+  @property "_focusedSubjectIndex", 0
+  @accessor "focusedSubjectIndex", (v) -> Math.clamp 0, (@flatSubjects().length - 1), @_focusedSubjectIndex()
+  @accessor "focusedSubject", -> @flatSubjects()[@focusedSubjectIndex()] if KEYBOARD and not (@detailedSubject() or @selectedSubject())
+  
+  @property "_focusedPortalIndex", 0
+  @accessor "focusedPortalIndex", (v) -> Math.clamp 0, (@portals().length - 1), @_focusedPortalIndex()
+  @accessor "focusedPortal", -> @portals()[@focusedPortalIndex()] if KEYBOARD and not @dragging()
   
   @accessor "hasNext", ->
     not @dragging() and not @swiping() and @page() is 0 and not @detailedSubject()
@@ -78,7 +118,7 @@ class ViewModel extends ko.ViewModel
     regular = -1 * @page() * @viewportWidth()
     regular += @_left() if @swiping()
     
-    l = 10
+    l = document.width * 0.33
     
     if regular > 0
       x = regular
@@ -144,6 +184,37 @@ class ViewModel extends ko.ViewModel
       "...to..."
     else
       "Your Portals"
+      
+  onUp: ->
+    if @page() is 0
+      @_focusedSubjectIndex(@focusedSubjectIndex() - 1)
+    else
+      @_focusedPortalIndex(@focusedPortalIndex() - 1)
+      
+  onDown: ->
+    if @page() is 0
+      @_focusedSubjectIndex(@focusedSubjectIndex() + 1)
+    else
+      @_focusedPortalIndex(@focusedPortalIndex() + 1)
+    
+  onLeft: -> @_page 0
+  onRight: -> @_page 1
+  
+  onSelect: ->
+    if @page() is 0
+      @detailedSubject @focusedSubject()
+    else if @selectedSubject()
+      @onBeam()
+      
+  onAction: ->
+    if @page() is 0
+      @selectedSubject @focusedSubject()
+    else if @selectedSubject()
+      @onBeam()
+      
+  onBack: ->
+    @_page 0
+    @selectedSubject null
 
 $ ->
   window.vm = vm = new ViewModel
