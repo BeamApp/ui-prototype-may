@@ -15,7 +15,7 @@
     };
 
     DragIntent.prototype.isTap = function() {
-      return this.isStationary() && !this.isQuickTap() && !this.isLongTap();
+      return this.isMaybeTap && this.isStationary() && !this.isQuickTap() && !this.isLongTap();
     };
 
     DragIntent.prototype.isQuickTap = function() {
@@ -23,7 +23,7 @@
     };
 
     DragIntent.prototype.isLongTap = function() {
-      return this.isStationary() && Date.now() > this.startedAt + 750;
+      return this.isMaybeTap && this.isStationary() && Date.now() > this.startedAt + 750;
     };
 
     DragIntent.prototype.diff = function() {
@@ -69,7 +69,7 @@
     };
 
     DragIntent.prototype.isSwipe = function() {
-      return !this.isTap() && !this.isStationary() && this.isHorizontal();
+      return this.isMaybeSwipe && !this.isTap() && !this.isStationary() && this.isHorizontal();
     };
 
     DragIntent.prototype.isScroll = function() {
